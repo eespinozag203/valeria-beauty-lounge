@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valeria Beauty Lounge | Reservas & Estética de Lujo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#0A0A0C',
+            charcoal: '#121216',
+            carddark: '#18181D',
+            gold: {
+              light: '#F3E5AB',
+              DEFAULT: '#D4AF37',
+              dark: '#AA8220',
+              glow: 'rgba(212, 175, 55, 0.35)'
+            }
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0A0A0C;
+      color: #F5F5F7;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA8220 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-border-glow {
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.08);
+    }
+    .logo-frame {
+      border: 3px solid #D4AF37;
+      box-shadow: 0 0 28px rgba(212, 175, 55, 0.55), inset 0 0 12px rgba(243, 229, 171, 0.3);
+      filter: brightness(1.12) contrast(1.05);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #E5C158 0%, #D4AF37 55%, #B58E22 100%);
+      color: #0A0A0C;
+      font-weight: 600;
+      transition: all 0.25s ease;
+    }
+    .btn-gold:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+      transform: translateY(-1px);
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8) sepia(1) saturate(3) hue-rotate(10deg);
+      cursor: pointer;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0A0A0C; }
+    ::-webkit-scrollbar-thumb { background: #2A2A32; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+  </style>
+</head>
+<body class="antialiased selection:bg-gold selection:text-obsidian">
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <!-- Top Navigation -->
+  <header class="sticky top-0 z-40 bg-obsidian/90 backdrop-blur-md border-b border-gold/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <a href="#inicio" class="flex items-center gap-3.5 group">
+        <div class="w-12 h-12 rounded-full overflow-hidden logo-frame bg-charcoal flex items-center justify-center shrink-0">
+          <img src="LOGO VALERY_2.jpeg" alt="Valeria Beauty Lounge"
+               class="w-full h-full object-cover"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none;" class="w-full h-full items-center justify-center bg-charcoal text-gold font-serif font-bold text-xl">VB</div>
+        </div>
+        <div>
+          <span class="font-serif text-xl sm:text-2xl font-bold tracking-wider gold-gradient-text block leading-none">VALERIA</span>
+          <span class="text-[10px] tracking-[0.28em] text-gold-light/80 uppercase block mt-1">Beauty Lounge</span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-7 text-xs uppercase tracking-widest text-gray-300">
+        <a href="#servicios" class="hover:text-gold transition">Servicios</a>
+        <a href="#promociones" class="hover:text-gold transition">Apertura Dic 5</a>
+        <a href="#reservar" class="hover:text-gold transition">Reservar Cita</a>
+        <a href="#ubicacion" class="hover:text-gold transition">Ubicación</a>
+      </nav>
+
+      <div class="flex items-center gap-2.5">
+        <button onclick="openShareModal()" class="px-3 py-2 rounded-lg border border-gold/40 text-gold-light hover:bg-gold/10 text-xs font-medium flex items-center gap-1.5 transition" title="Compartir enlace o código QR">
+          <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+          <span class="hidden sm:inline">Compartir / QR</span>
+        </button>
+
+        <button onclick="openAdminModal()" class="px-3 py-2 rounded-lg bg-carddark border border-gold/30 text-gray-300 hover:text-gold hover:border-gold text-xs font-medium flex items-center gap-1.5 transition">
+          <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span>Agenda / Admin</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="inicio" class="relative overflow-hidden py-16 sm:py-24 border-b border-gold/15">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.14),transparent_60%)] pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/40 text-gold-light text-xs tracking-widest uppercase mb-8">
+        <span class="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+        Gran Inauguración • 05 de Diciembre, 2026
+      </div>
+
+      <div class="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-full overflow-hidden logo-frame bg-charcoal mb-8 flex items-center justify-center">
+        <img src="LOGO VALERY_2.jpeg" alt="Valeria Beauty Lounge Logo"
+             class="w-full h-full object-cover"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div style="display:none;" class="w-full h-full items-center justify-center bg-charcoal text-gold font-serif font-bold text-4xl">VBL</div>
+      </div>
+
+      <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-wide text-white mb-4">
+        Realza tu Belleza con <span class="gold-gradient-text italic">Distinción</span>
+      </h1>
+      <p class="max-w-2xl mx-auto text-gray-300 text-sm sm:text-base leading-relaxed mb-8 font-light">
+        Un espacio exclusivo en Managua diseñado para brindarte atención personalizada, técnicas modernas y una experiencia de relajación inolvidable.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#reservar" class="btn-gold px-8 py-4 rounded-xl text-xs uppercase tracking-widest shadow-lg w-full sm:w-auto">
+          Agendar mi Cita Ahora
+        </a>
+        <a href="https://wa.me/50586218506?text=Hola%20Valeria%20Beauty%20Lounge,%20me%20gustar%C3%ADa%20consultar%20disponibilidad%20para%20una%20cita."
+           target="_blank" rel="noopener noreferrer"
+           class="px-8 py-4 rounded-xl border border-gold/50 text-gold-light hover:bg-gold/10 text-xs uppercase tracking-widest transition w-full sm:w-auto flex items-center justify-center gap-2">
+          <span>WhatsApp Directo (+505 8621 8506)</span>
+        </a>
+      </div>
+
+      <!-- Hours & Status Bar -->
+      <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto text-left">
+        <div class="bg-carddark/90 p-4 rounded-xl gold-border-glow flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-lg bg-gold/15 flex items-center justify-center text-gold shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wider text-gold">Horario de Atención</p>
+            <p class="text-sm font-medium text-white">Mar – Dom: 9:00 AM – 6:00 PM</p>
+            <p class="text-[11px] text-gray-400">Lunes: Cerrado</p>
+          </div>
+        </div>
+
+        <div class="bg-carddark/90 p-4 rounded-xl gold-border-glow flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-lg bg-gold/15 flex items-center justify-center text-gold shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wider text-gold">Apertura Oficial</p>
+            <p class="text-sm font-medium text-white">Sábado 05 Dic, 2026</p>
+            <p class="text-[11px] text-gray-400">Agenda abierta en tiempo real</p>
+          </div>
+        </div>
+
+        <div class="bg-carddark/90 p-4 rounded-xl gold-border-glow flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-lg bg-gold/15 flex items-center justify-center text-gold shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wider text-gold">Ubicación</p>
+            <p class="text-sm font-medium text-white">Bolonia, Managua</p>
+            <p class="text-[11px] text-gray-400">Parque Las Madres 200m al norte</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- December Opening Perks -->
+  <section id="promociones" class="py-14 bg-charcoal/60 border-b border-gold/15">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10">
+        <span class="text-xs uppercase tracking-[0.25em] text-gold">Celebra con Nosotros</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-white mt-2">Regalías Exclusivas de Apertura</h2>
+        <p class="text-xs sm:text-sm text-gray-400 mt-2">Válidas durante todo nuestro mes inaugural a partir del 05 de Diciembre, 2026</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-carddark p-6 rounded-2xl gold-border-glow text-center hover:border-gold transition">
+          <div class="w-12 h-12 mx-auto rounded-full bg-gold/15 text-gold flex items-center justify-center mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-serif text-2xl font-semibold text-gold-light mb-2">Bebidas de Cortesía</h3>
+          <p class="text-xs text-gray-300 leading-relaxed">Disfruta de café gourmet, té aromático o copa de bienvenida durante toda tu estadía en el salón.</p>
+        </div>
+
+        <div class="bg-carddark p-6 rounded-2xl gold-border-glow text-center hover:border-gold transition">
+          <div class="w-12 h-12 mx-auto rounded-full bg-gold/15 text-gold flex items-center justify-center mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+          </div>
+          <h3 class="font-serif text-2xl font-semibold text-gold-light mb-2">Valoración Capilar de Cortesía</h3>
+          <p class="text-xs text-gray-300 leading-relaxed">Diagnóstico profesional personalizado para recomendar el tratamiento ideal según la salud de tu cabello.</p>
+        </div>
+
+        <div class="bg-carddark p-6 rounded-2xl gold-border-glow text-center hover:border-gold transition">
+          <div class="w-12 h-12 mx-auto rounded-full bg-gold/15 text-gold flex items-center justify-center mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+          </div>
+          <h3 class="font-serif text-2xl font-semibold text-gold-light mb-2">10% de Descuento</h3>
+          <p class="text-xs text-gray-300 leading-relaxed">Beneficio especial de bienvenida aplicable en tu primera cita reservada durante diciembre.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Catalog (No Prices) -->
+  <section id="servicios" class="py-16 border-b border-gold/15">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-12">
+        <span class="text-xs uppercase tracking-[0.25em] text-gold">Carta de Experiencias</span>
+        <h2 class="font-serif text-3xl sm:text-5xl font-bold text-white mt-2">Nuestros Servicios</h2>
+        <p class="text-xs sm:text-sm text-gray-400 mt-2 max-w-xl mx-auto">Selecciona el servicio que deseas para iniciar tu reserva personalizada.</p>
+      </div>
+
+      <!-- Featured VIP Card -->
+      <div class="mb-8 bg-gradient-to-r from-carddark via-[#1F1C14] to-carddark p-6 sm:p-8 rounded-2xl border border-gold/60 shadow-[0_0_30px_rgba(212,175,55,0.14)] flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="text-center md:text-left">
+          <span class="inline-block px-3 py-1 rounded-full bg-gold text-obsidian text-[10px] font-bold uppercase tracking-widest mb-3">Experiencia Insignia</span>
+          <h3 class="font-serif text-2xl sm:text-3xl font-bold text-gold-light">Servicio VIP Personalizado</h3>
+          <p class="text-xs sm:text-sm text-gray-300 mt-2 max-w-2xl">Atención integral privada diseñada a tu medida: asesoría de imagen, ritual capilar profundo, estilismo completo y amenidades exclusivas.</p>
+        </div>
+        <button onclick="selectServiceAndScroll('Servicio VIP Personalizado')" class="btn-gold px-6 py-3.5 rounded-xl text-xs uppercase tracking-widest shrink-0 w-full md:w-auto">
+          Reservar VIP
+        </button>
+      </div>
+
+      <!-- Service Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="servicesGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Real-Time Booking Form Section -->
+  <section id="reservar" class="py-16 bg-charcoal/50 border-b border-gold/15">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+      <div class="bg-carddark rounded-3xl p-6 sm:p-10 gold-border-glow">
+        <div class="text-center mb-8">
+          <span class="text-xs uppercase tracking-[0.25em] text-gold">Agenda en Línea</span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-white mt-2">Reserva tu Cita</h2>
+          <p class="text-xs text-gray-400 mt-2">Tu cita se registra al instante en nuestra agenda y podrás confirmarla vía WhatsApp.</p>
+        </div>
+
+        <form id="bookingForm" class="space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-gold-light mb-2">Nombre Completo *</label>
+              <input type="text" id="clientName" required placeholder="Ej. María Fernanda López"
+                     class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gold/30 text-white text-sm focus:outline-none focus:border-gold transition" />
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-gold-light mb-2">Teléfono / WhatsApp *</label>
+              <input type="tel" id="clientPhone" required placeholder="Ej. +505 8888 8888"
+                     class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gold/30 text-white text-sm focus:outline-none focus:border-gold transition" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-gold-light mb-2">Servicio Deseado *</label>
+            <select id="clientService" required
+                    class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gold/30 text-white text-sm focus:outline-none focus:border-gold transition">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-gold-light mb-2">Fecha de la Cita * (Desde 05 Dic 2026)</label>
+              <input type="date" id="bookingDate" min="2026-12-05" value="2026-12-05" required
+                     class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gold/30 text-white text-sm focus:outline-none focus:border-gold transition" />
+              <p id="dateHelperMsg" class="text-[11px] text-gray-400 mt-1.5">Atendemos de Martes a Domingo (Lunes cerrado).</p>
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-gold-light mb-2">Hora Preferida * (9:00 AM – 6:00 PM)</label>
+              <select id="bookingTime" required
+                      class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gold/30 text-white text-sm focus:outline-none focus:border-gold transition">
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="01:00 PM">01:00 PM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="03:00 PM">03:00 PM</option>
+                <option value="04:00 PM">04:00 PM</option>
+                <option value="05:00 PM">05:00 PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-gold-light mb-2">Notas o Preferencias (Opcional)</label>
+            <textarea id="bookingNotes" rows="2" placeholder="Indícanos si deseas valoración capilar de cortesía, largo de cabello u otra preferencia..."
+                      class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gold/30 text-white text-sm focus:outline-none focus:border-gold transition"></textarea>
+          </div>
+
+          <button type="submit" id="submitBookingBtn" class="w-full btn-gold py-4 rounded-xl text-xs uppercase tracking-widest shadow-lg flex items-center justify-center gap-2">
+            <span>Confirmar Reserva en Tiempo Real</span>
+          </button>
+        </form>
+
+        <!-- Confirmation Receipt Box -->
+        <div id="confirmationBox" class="hidden mt-8 p-6 rounded-2xl bg-obsidian border border-gold/60 text-center space-y-4">
+          <div class="w-12 h-12 mx-auto rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <h3 class="font-serif text-2xl font-bold text-gold-light">¡Tu Cita ha sido Registrada!</h3>
+          <p id="confirmationSummary" class="text-xs sm:text-sm text-gray-300 leading-relaxed"></p>
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a id="whatsappConfirmLink" href="#" target="_blank" rel="noopener noreferrer"
+               class="btn-gold px-6 py-3.5 rounded-xl text-xs uppercase tracking-widest w-full sm:w-auto inline-flex items-center justify-center gap-2">
+              <span>Enviar Confirmación por WhatsApp</span>
+            </a>
+            <button onclick="resetBookingForm()" class="px-5 py-3.5 rounded-xl border border-gold/30 text-gray-300 hover:text-white text-xs uppercase tracking-wider w-full sm:w-auto">
+              Hacer Otra Reserva
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Location & Google Map Section -->
+  <section id="ubicacion" class="py-16 border-b border-gold/15">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div class="space-y-5">
+          <span class="text-xs uppercase tracking-[0.25em] text-gold">Visítanos en Managua</span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-white">Nuestra Ubicación</h2>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            Te esperamos en nuestras instalaciones diseñadas para tu comodidad y privacidad.
+          </p>
+
+          <div class="bg-carddark p-5 rounded-2xl gold-border-glow space-y-3">
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <div>
+                <p class="text-xs uppercase tracking-wider text-gold">Dirección Exacta</p>
+                <p class="text-sm font-medium text-white">Bolonia, parque las madres 200 mts al norte. MD</p>
+                <p class="text-[11px] text-gray-400 mt-0.5">Coordenadas: 12°08'13.9"N 86°16'54.2"W (12.137201, -86.281708)</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              <div>
+                <p class="text-xs uppercase tracking-wider text-gold">Teléfono & WhatsApp</p>
+                <a href="https://wa.me/50586218506" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-white hover:text-gold transition">+505 8621 8506</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3 pt-2">
+            <a href="https://www.google.com/maps/search/?api=1&query=12.137201,-86.281708" target="_blank" rel="noopener noreferrer"
+               class="btn-gold px-6 py-3 rounded-xl text-xs uppercase tracking-widest inline-flex items-center gap-2">
+              <span>Abrir en Google Maps</span>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61596585064899" target="_blank" rel="noopener noreferrer"
+               class="px-6 py-3 rounded-xl border border-gold/40 text-gold-light hover:bg-gold/10 text-xs uppercase tracking-widest inline-flex items-center gap-2 transition">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+              <span>Síguenos en Facebook</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden gold-border-glow h-80 sm:h-96 bg-carddark">
+          <iframe
+            title="Mapa Valeria Beauty Lounge"
+            src="https://maps.google.com/maps?q=12.137201,-86.281708&z=17&output=embed"
+            class="w-full h-full border-0 filter invert-[90%] hue-rotate-180 contrast-[95%]"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 bg-obsidian text-center">
+    <div class="max-w-4xl mx-auto px-4 space-y-3">
+      <p class="font-serif text-2xl font-bold gold-gradient-text tracking-wider">VALERIA BEAUTY LOUNGE</p>
+      <p class="text-xs text-gray-400">Martes a Domingo • 9:00 AM – 6:00 PM (Lunes Cerrado)</p>
+      <div class="flex items-center justify-center gap-4 pt-1">
+        <a href="https://www.facebook.com/profile.php?id=61596585064899" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-1.5 text-xs text-gold-light hover:text-gold transition">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+          <span>Facebook Oficial</span>
+        </a>
+        <span class="text-gray-600">•</span>
+        <a href="https://wa.me/50586218506" target="_blank" rel="noopener noreferrer" class="text-xs text-gold-light hover:text-gold transition">
+          WhatsApp: +505 8621 8506
+        </a>
+      </div>
+      <p class="text-[11px] text-gold/70 font-normal tracking-wide pt-1">Bolonia, parque las madres 200 mts al norte. MD</p>
+      <p class="text-[11px] text-gray-600 pt-2">© 2026 Valeria Beauty Lounge. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- SHARE & QR MODAL -->
+  <div id="shareModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-carddark border border-gold/50 rounded-2xl max-w-md w-full p-6 space-y-5 relative shadow-2xl">
+      <button onclick="closeShareModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div class="text-center">
+        <span class="text-[10px] uppercase tracking-widest text-gold">Enlace Público & Código QR</span>
+        <h3 class="font-serif text-2xl font-bold text-white mt-1">Comparte con tus Clientas</h3>
+        <p class="text-xs text-gray-400 mt-1">Copia el enlace de tu sitio publicado o descarga el código QR para tus redes sociales.</p>
+      </div>
+
+      <div>
+        <label class="block text-[11px] uppercase tracking-wider text-gold-light mb-1.5">URL Pública de Reservas</label>
+        <div class="flex gap-2">
+          <input type="url" id="publicUrlInput"
+                 class="w-full px-3 py-2.5 rounded-lg bg-obsidian border border-gold/30 text-white text-xs focus:outline-none focus:border-gold" />
+          <button onclick="updateAndCopyPublicUrl()" class="btn-gold px-4 py-2.5 rounded-lg text-xs uppercase tracking-wider shrink-0">
+            Copiar
+          </button>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-1.5">Si cambias el subdominio en Netlify, pégalo aquí para actualizar el QR al instante.</p>
+      </div>
+
+      <div class="flex flex-col items-center justify-center bg-white p-4 rounded-xl w-fit mx-auto">
+        <div id="qrcodeContainer"></div>
+      </div>
+
+      <div class="flex justify-center">
+        <button onclick="downloadQRCode()" class="px-5 py-2.5 rounded-xl border border-gold/40 text-gold-light hover:bg-gold/10 text-xs uppercase tracking-wider transition">
+          Descargar Código QR (PNG)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PIN & AGENDA MODAL -->
+  <div id="adminModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-carddark border border-gold/50 rounded-2xl max-w-5xl w-full p-6 sm:p-8 relative shadow-2xl my-8">
+      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <!-- PIN Gate -->
+      <div id="adminPinGate" class="max-w-sm mx-auto text-center py-8 space-y-5">
+        <div class="w-14 h-14 mx-auto rounded-full bg-gold/15 text-gold flex items-center justify-center">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <div>
+          <h3 class="font-serif text-2xl font-bold text-white">Acceso Administrativo</h3>
+          <p class="text-xs text-gray-400 mt-1">Ingresa tu PIN de seguridad para gestionar la agenda en tiempo real.</p>
+        </div>
+        <form onsubmit="verifyAdminPin(event)" class="space-y-4">
+          <input type="password" id="adminPinInput" maxlength="8" inputmode="numeric" required placeholder="••••"
+                 class="w-full text-center tracking-[0.5em] text-xl px-4 py-3 rounded-xl bg-obsidian border border-gold/40 text-gold focus:outline-none focus:border-gold" />
+          <button type="submit" class="w-full btn-gold py-3 rounded-xl text-xs uppercase tracking-widest">
+            Desbloquear Agenda
+          </button>
+        </form>
+      </div>
+
+      <!-- Admin Dashboard (Unlocked) -->
+      <div id="adminDashboard" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gold/20 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="dbLiveDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="dbLiveStatus" class="text-[11px] uppercase tracking-widest text-emerald-400 font-semibold">Conectado en Tiempo Real • valeria-beauty-lounge</span>
+            </div>
+            <h3 class="font-serif text-2xl sm:text-3xl font-bold text-white mt-1">Agenda de Reservas</h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="addTestReservation()" class="px-3 py-2 rounded-lg bg-gold/15 border border-gold/40 text-gold-light hover:bg-gold/25 text-xs transition">
+              + Cita de Prueba
+            </button>
+            <button onclick="exportReservationsCSV()" class="px-3 py-2 rounded-lg bg-obsidian border border-gold/30 text-gray-300 hover:text-gold text-xs transition">
+              Exportar CSV
+            </button>
+            <button onclick="exportReservationsJSON()" class="px-3 py-2 rounded-lg bg-obsidian border border-gold/30 text-gray-300 hover:text-gold text-xs transition">
+              Exportar JSON
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <input type="text" id="adminSearchInput" oninput="renderAdminTable()" placeholder="Buscar por clienta, teléfono o servicio..."
+                 class="px-3.5 py-2.5 rounded-xl bg-obsidian border border-gold/30 text-white text-xs focus:outline-none focus:border-gold" />
+          <input type="date" id="adminDateFilter" onchange="renderAdminTable()"
+                 class="px-3.5 py-2.5 rounded-xl bg-obsidian border border-gold/30 text-white text-xs focus:outline-none focus:border-gold" />
+          <select id="adminStatusFilter" onchange="renderAdminTable()"
+                  class="px-3.5 py-2.5 rounded-xl bg-obsidian border border-gold/30 text-white text-xs focus:outline-none focus:border-gold">
+            <option value="ALL">Todos los estados</option>
+            <option value="Activa">Activas</option>
+            <option value="Anulada">Anuladas</option>
+          </select>
+        </div>
+
+        <!-- Appointments Table -->
+        <div class="overflow-x-auto rounded-xl border border-gold/20">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-obsidian text-[11px] uppercase tracking-wider text-gold border-b border-gold/20">
+                <th class="py-3 px-4">Fecha & Hora</th>
+                <th class="py-3 px-4">Clienta</th>
+                <th class="py-3 px-4">Servicio</th>
+                <th class="py-3 px-4">Notas</th>
+                <th class="py-3 px-4">Estado</th>
+                <th class="py-3 px-4 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody" class="divide-y divide-gold/10 text-xs text-gray-200">
+              <tr><td colspan="6" class="py-8 text-center text-gray-400">Cargando citas desde Firebase...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Live Data Inspector -->
+        <details class="bg-obsidian rounded-xl border border-gold/20 p-4">
+          <summary class="text-xs text-gold-light cursor-pointer font-medium">Inspector de Base de Datos en Vivo (Colección: RESERVAS)</summary>
+          <pre id="rawJsonInspector" class="mt-3 text-[11px] text-emerald-300/90 overflow-x-auto max-h-48"></pre>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Modular SDK & Application Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      updateDoc,
+      deleteDoc,
+      doc,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    // Configuración oficial de Firebase de Valeria Beauty Lounge
+    const firebaseConfig = {
+      apiKey: "AIzaSyAvKA0uUUCodh43NUhLSG1cW2D147i_u5I",
+      authDomain: "valeria-beauty-lounge.firebaseapp.com",
+      projectId: "valeria-beauty-lounge",
+      storageBucket: "valeria-beauty-lounge.firebasestorage.app",
+      messagingSenderId: "167395263568",
+      appId: "1:167395263568:web:caf4ec6611ec69b826fd55",
+      measurementId: "G-CH9958QKQT"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const RESERVAS_COLLECTION = "RESERVAS";
+
+    // Catálogo de servicios (sin precios)
+    const SERVICES = [
+      { name: "Servicio VIP Personalizado", desc: "Experiencia privada integral: asesoría de imagen, ritual capilar, estilismo y amenidades." },
+      { name: "Corte & Estilismo de Autor", desc: "Diseño de corte personalizado según tus facciones, lavado relajante y brushing profesional." },
+      { name: "Balayage & Iluminación", desc: "Degradados luminosos naturales y técnicas de colorimetría de última generación." },
+      { name: "Coloración & Tinte Completo", desc: "Cobertura perfecta con fórmulas de bajo impacto que protegen el brillo y suavidad." },
+      { name: "Alisado Keratina & Botox Capilar", desc: "Control de frizz, hidratación profunda y restauración de la fibra capilar." },
+      { name: "Peinado Social & Eventos", desc: "Ondas glam, recogidos elegantes y estilismo de larga duración para ocasiones especiales." },
+      { name: "Manicure Spa & Gel", desc: "Cuidado integral de manos, cutículas y esmaltado semipermanente de alto brillo." },
+      { name: "Pedicure Spa Relajante", desc: "Exfoliación, hidratación profunda y esmaltado impecable para tus pies." },
+      { name: "Diseño de Cejas & Pestañas", desc: "Perfilado perfecto, laminado y realce natural de tu mirada." }
+    ];
+
+    let allReservations = [];
+    let isAdminUnlocked = false;
+    const ADMIN_PIN = "1311";
+
+    // Toast Notification Helper
+    window.showToast = function(message, type = "info") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      const colors = {
+        success: "bg-emerald-950/95 border-emerald-500/60 text-emerald-100",
+        error: "bg-red-950/95 border-red-500/60 text-red-100",
+        info: "bg-carddark/95 border-gold/60 text-gold-light"
+      };
+      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border shadow-xl text-xs leading-relaxed transition-all duration-300 ${colors[type] || colors.info}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+      }, 4200);
+    };
+
+    // Populate Services Grid & Select
+    function initServices() {
+      const grid = document.getElementById("servicesGrid");
+      const select = document.getElementById("clientService");
+
+      grid.innerHTML = SERVICES.slice(1).map(s => `
+        <div class="bg-carddark p-6 rounded-2xl gold-border-glow flex flex-col justify-between hover:border-gold transition">
+          <div>
+            <h3 class="font-serif text-xl font-semibold text-gold-light mb-2">${s.name}</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">${s.desc}</p>
+          </div>
+          <button onclick="selectServiceAndScroll('${s.name.replace(/'/g, "\'")}')"
+                  class="mt-5 text-left text-[11px] uppercase tracking-widest text-gold hover:text-gold-light font-semibold flex items-center gap-1.5">
+            <span>Seleccionar Servicio</span>
+            <span>→</span>
+          </button>
+        </div>
+      `).join("");
+
+      select.innerHTML = SERVICES.map(s => `<option value="${s.name}">${s.name}</option>`).join("");
+    }
+
+    window.selectServiceAndScroll = function(serviceName) {
+      const select = document.getElementById("clientService");
+      select.value = serviceName;
+      document.getElementById("reservar").scrollIntoView({ behavior: "smooth" });
+      showToast(`Servicio seleccionado: ${serviceName}`, "info");
+    };
+
+    // Date validation (Min Dec 5, 2026 & No Mondays)
+    const bookingDateInput = document.getElementById("bookingDate");
+    bookingDateInput.addEventListener("change", () => {
+      const val = bookingDateInput.value;
+      if (!val) return;
+      if (val < "2026-12-05") {
+        showToast("Abrimos nuestras puertas el 05 de Diciembre de 2026. Por favor elige esa fecha o posterior.", "error");
+        bookingDateInput.value = "2026-12-05";
+        return;
+      }
+      const [y, m, d] = val.split("-").map(Number);
+      const selectedDay = new Date(y, m - 1, d).getDay(); // 0 = Sun, 1 = Mon
+      if (selectedDay === 1) {
+        showToast("Los lunes permanecemos cerrados. Atendemos de Martes a Domingo.", "error");
+        bookingDateInput.value = "";
+      }
+    });
+
+    // Submit Booking to Firestore
+    document.getElementById("bookingForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("clientName").value.trim();
+      const phone = document.getElementById("clientPhone").value.trim();
+      const service = document.getElementById("clientService").value;
+      const date = document.getElementById("bookingDate").value;
+      const time = document.getElementById("bookingTime").value;
+      const notes = document.getElementById("bookingNotes").value.trim();
+
+      if (date < "2026-12-05") {
+        showToast("La fecha mínima de reserva es el 05 de Diciembre de 2026.", "error");
+        return;
+      }
+      const [y, m, d] = date.split("-").map(Number);
+      if (new Date(y, m - 1, d).getDay() === 1) {
+        showToast("Los lunes el salón está cerrado. Selecciona de Martes a Domingo.", "error");
+        return;
+      }
+
+      const btn = document.getElementById("submitBookingBtn");
+      btn.disabled = true;
+      btn.innerHTML = `<span>Guardando reserva...</span>`;
+
+      try {
+        await addDoc(collection(db, RESERVAS_COLLECTION), {
+          clientName: name,
+          clientPhone: phone,
+          service: service,
+          date: date,
+          time: time,
+          notes: notes,
+          status: "Activa",
+          createdAt: serverTimestamp()
+        });
+
+        const waMessage =
+          `¡Hola Valeria Beauty Lounge! ✨ Deseo confirmar mi cita:
+` +
+          `• *Clienta:* ${name}
+` +
+          `• *Teléfono:* ${phone}
+` +
+          `• *Servicio:* ${service}
+` +
+          `• *Fecha:* ${date}
+` +
+          `• *Hora:* ${time}
+` +
+          (notes ? `• *Notas:* ${notes}
+` : ``) +
+          `• *Ubicación:* Bolonia, parque las madres 200 mts al norte. MD`;
+
+        const waUrl = `https://wa.me/50586218506?text=${encodeURIComponent(waMessage)}`;
+
+        document.getElementById("bookingForm").classList.add("hidden");
+        document.getElementById("confirmationSummary").innerHTML =
+          `<strong>${name}</strong>, hemos agendado tu cita para <strong>${service}</strong> el día <strong>${date}</strong> a las <strong>${time}</strong>.<br>Incluye tus regalías de inauguración (bebida de cortesía, valoración capilar y 10% de descuento).`;
+        document.getElementById("whatsappConfirmLink").href = waUrl;
+        document.getElementById("confirmationBox").classList.remove("hidden");
+
+        showToast("¡Reserva registrada con éxito en tiempo real!", "success");
+      } catch (err) {
+        console.error("Error guardando reserva:", err);
+        showToast("Error al conectar con la base de datos: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Confirmar Reserva en Tiempo Real</span>`;
+      }
+    });
+
+    window.resetBookingForm = function() {
+      document.getElementById("bookingForm").reset();
+      document.getElementById("bookingDate").value = "2026-12-05";
+      document.getElementById("confirmationBox").classList.add("hidden");
+      document.getElementById("bookingForm").classList.remove("hidden");
+    };
+
+    // Real-Time Listener (onSnapshot)
+    function startRealtimeSync() {
+      onSnapshot(collection(db, RESERVAS_COLLECTION), (snapshot) => {
+        const list = [];
+        snapshot.forEach((docSnap) => {
+          list.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        // Sort chronologically by date then time
+        list.sort((a, b) => {
+          const cmpDate = (a.date || "").localeCompare(b.date || "");
+          if (cmpDate !== 0) return cmpDate;
+          return parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time);
+        });
+
+        allReservations = list;
+        document.getElementById("rawJsonInspector").textContent = JSON.stringify(list, null, 2);
+        if (isAdminUnlocked) {
+          renderAdminTable();
+        }
+      }, (error) => {
+        console.error("Error en sincronización en vivo:", error);
+        const dot = document.getElementById("dbLiveDot");
+        const status = document.getElementById("dbLiveStatus");
+        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+        if (status) {
+          status.textContent = "Error de conexión con Firestore";
+          status.className = "text-[11px] uppercase tracking-widest text-red-400 font-semibold";
+        }
+      });
+    }
+
+    function parseTimeToMinutes(timeStr) {
+      if (!timeStr) return 0;
+      const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!match) return 0;
+      let hours = parseInt(match[1], 10);
+      const mins = parseInt(match[2], 10);
+      const period = match[3].toUpperCase();
+      if (period === "PM" && hours !== 12) hours += 12;
+      if (period === "AM" && hours === 12) hours = 0;
+      return hours * 60 + mins;
+    }
+
+    // Admin Modal & PIN
+    window.openAdminModal = function() {
+      document.getElementById("adminModal").classList.remove("hidden");
+      if (!isAdminUnlocked) {
+        document.getElementById("adminPinInput").focus();
+      } else {
+        renderAdminTable();
+      }
+    };
+
+    window.closeAdminModal = function() {
+      document.getElementById("adminModal").classList.add("hidden");
+    };
+
+    window.verifyAdminPin = function(e) {
+      e.preventDefault();
+      const entered = document.getElementById("adminPinInput").value.trim();
+      if (entered === ADMIN_PIN) {
+        isAdminUnlocked = true;
+        document.getElementById("adminPinGate").classList.add("hidden");
+        document.getElementById("adminDashboard").classList.remove("hidden");
+        renderAdminTable();
+        showToast("Acceso concedido a la agenda en tiempo real.", "success");
+      } else {
+        showToast("PIN incorrecto. Inténtalo nuevamente.", "error");
+        document.getElementById("adminPinInput").value = "";
+      }
+    };
+
+    window.renderAdminTable = function() {
+      const tbody = document.getElementById("adminTableBody");
+      const queryText = (document.getElementById("adminSearchInput").value || "").toLowerCase();
+      const filterDate = document.getElementById("adminDateFilter").value;
+      const filterStatus = document.getElementById("adminStatusFilter").value;
+
+      const filtered = allReservations.filter(r => {
+        const matchesText =
+          (r.clientName || "").toLowerCase().includes(queryText) ||
+          (r.clientPhone || "").toLowerCase().includes(queryText) ||
+          (r.service || "").toLowerCase().includes(queryText);
+        const matchesDate = !filterDate || r.date === filterDate;
+        const matchesStatus = filterStatus === "ALL" || (r.status || "Activa") === filterStatus;
+        return matchesText && matchesDate && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-gray-400">No hay reservas que coincidan con el filtro actual.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(r => {
+        const status = r.status || "Activa";
+        const badgeClass = status === "Activa"
+          ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/40"
+          : "bg-red-500/15 text-red-300 border-red-500/40";
+        return `
+          <tr class="hover:bg-white/[0.02]">
+            <td class="py-3.5 px-4 whitespace-nowrap">
+              <div class="font-semibold text-gold-light">${r.date || "-"}</div>
+              <div class="text-[11px] text-gray-400">${r.time || "-"}</div>
+            </td>
+            <td class="py-3.5 px-4">
+              <div class="font-medium text-white">${r.clientName || "-"}</div>
+              <a href="https://wa.me/${(r.clientPhone || "").replace(/\D/g, "")}" target="_blank" class="text-[11px] text-gold hover:underline">${r.clientPhone || "-"}</a>
+            </td>
+            <td class="py-3.5 px-4 text-gray-200">${r.service || "-"}</td>
+            <td class="py-3.5 px-4 text-gray-400 max-w-xs truncate" title="${r.notes || ""}">${r.notes || "—"}</td>
+            <td class="py-3.5 px-4">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold border ${badgeClass}">${status}</span>
+            </td>
+            <td class="py-3.5 px-4 text-right whitespace-nowrap space-x-2">
+              <button onclick="toggleReservationStatus('${r.id}', '${status}')"
+                      class="px-2.5 py-1 rounded-lg border border-gold/30 text-[11px] text-gold-light hover:bg-gold/10 transition">
+                ${status === "Activa" ? "Anular" : "Reactivar"}
+              </button>
+              <button onclick="removeReservation('${r.id}')"
+                      class="px-2.5 py-1 rounded-lg border border-red-500/30 text-[11px] text-red-300 hover:bg-red-500/15 transition">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    };
+
+    window.toggleReservationStatus = async function(id, currentStatus) {
+      const nextStatus = currentStatus === "Activa" ? "Anulada" : "Activa";
+      try {
+        await updateDoc(doc(db, RESERVAS_COLLECTION, id), { status: nextStatus });
+        showToast(`Cita marcada como ${nextStatus}.`, "info");
+      } catch (err) {
+        showToast("Error al actualizar estado: " + err.message, "error");
+      }
+    };
+
+    window.removeReservation = async function(id) {
+      if (!confirm("¿Deseas eliminar permanentemente esta reserva?")) return;
+      try {
+        await deleteDoc(doc(db, RESERVAS_COLLECTION, id));
+        showToast("Reserva eliminada.", "info");
+      } catch (err) {
+        showToast("Error al eliminar: " + err.message, "error");
+      }
+    };
+
+    window.addTestReservation = async function() {
+      try {
+        await addDoc(collection(db, RESERVAS_COLLECTION), {
+          clientName: "Clienta de Prueba",
+          clientPhone: "+505 8621 8506",
+          service: "Servicio VIP Personalizado",
+          date: "2026-12-05",
+          time: "10:00 AM",
+          notes: "Registro de verificación en tiempo real",
+          status: "Activa",
+          createdAt: serverTimestamp()
+        });
+        showToast("Cita de prueba agregada a Firebase.", "success");
+      } catch (err) {
+        showToast("Error creando prueba: " + err.message, "error");
+      }
+    };
+
+    window.exportReservationsCSV = function() {
+      if (!allReservations.length) return showToast("No hay citas para exportar.", "info");
+      const headers = ["Fecha", "Hora", "Clienta", "Telefono", "Servicio", "Notas", "Estado"];
+      const rows = allReservations.map(r => [
+        r.date, r.time, r.clientName, r.clientPhone, r.service, (r.notes || "").replace(/,/g, ";"), r.status || "Activa"
+      ]);
+      const csv = [headers.join(","), ...rows.map(r => r.map(v => `"${v || ""}"`).join(","))].join("
+");
+      downloadFile(csv, "agenda-valeria-beauty-lounge.csv", "text/csv;charset=utf-8;");
+    };
+
+    window.exportReservationsJSON = function() {
+      if (!allReservations.length) return showToast("No hay citas para exportar.", "info");
+      downloadFile(JSON.stringify(allReservations, null, 2), "agenda-valeria-beauty-lounge.json", "application/json");
+    };
+
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Share & QR Modal Logic
+    let qrInstance = null;
+
+    window.openShareModal = function() {
+      const modal = document.getElementById("shareModal");
+      const input = document.getElementById("publicUrlInput");
+      const currentOrigin = window.location.origin && window.location.origin.startsWith("http")
+        ? window.location.href
+        : "https://valeria-beauty-lounge.netlify.app";
+      if (!input.value) input.value = currentOrigin;
+      renderQRCode(input.value);
+      modal.classList.remove("hidden");
+    };
+
+    window.closeShareModal = function() {
+      document.getElementById("shareModal").classList.add("hidden");
+    };
+
+    function renderQRCode(url) {
+      const container = document.getElementById("qrcodeContainer");
+      container.innerHTML = "";
+      qrInstance = new QRCode(container, {
+        text: url,
+        width: 180,
+        height: 180,
+        colorDark: "#0A0A0C",
+        colorLight: "#FFFFFF",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    window.updateAndCopyPublicUrl = async function() {
+      const input = document.getElementById("publicUrlInput");
+      const url = input.value.trim();
+      if (!url) return;
+      renderQRCode(url);
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast("¡Enlace copiado al portapapeles listo para enviar por WhatsApp!", "success");
+      } catch {
+        input.select();
+        document.execCommand("copy");
+        showToast("Enlace copiado.", "success");
+      }
+    };
+
+    window.downloadQRCode = function() {
+      const img = document.querySelector("#qrcodeContainer img");
+      const canvas = document.querySelector("#qrcodeContainer canvas");
+      const dataUrl = img ? img.src : (canvas ? canvas.toDataURL("image/png") : null);
+      if (!dataUrl) return;
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = "QR-Valeria-Beauty-Lounge.png";
+      a.click();
+    };
+
+    // Initialize
+    initServices();
+    startRealtimeSync();
+  </script>
+</body>
+</html>
