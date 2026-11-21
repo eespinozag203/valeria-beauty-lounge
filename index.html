@@ -67,7 +67,6 @@
       filter: invert(0.8) sepia(1) saturate(3) hue-rotate(10deg);
       cursor: pointer;
     }
-    /* Custom scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #0A0A0C; }
     ::-webkit-scrollbar-thumb { background: #2A2A32; border-radius: 4px; }
@@ -439,7 +438,7 @@
             Copiar
           </button>
         </div>
-        <p class="text-[10px] text-gray-400 mt-1.5">Si cambias el subdominio en Netlify, pégalo aquí para actualizar el QR al instante.</p>
+        <p class="text-[10px] text-gray-400 mt-1.5">Comparte este enlace directo para que tus clientas reserven en línea.</p>
       </div>
 
       <div class="flex flex-col items-center justify-center bg-white p-4 rounded-xl w-fit mx-auto">
@@ -558,7 +557,6 @@
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    // Configuración oficial de Firebase de Valeria Beauty Lounge
     const firebaseConfig = {
       apiKey: "AIzaSyAvKA0uUUCodh43NUhLSG1cW2D147i_u5I",
       authDomain: "valeria-beauty-lounge.firebaseapp.com",
@@ -573,7 +571,6 @@
     const db = getFirestore(app);
     const RESERVAS_COLLECTION = "RESERVAS";
 
-    // Catálogo de servicios (sin precios)
     const SERVICES = [
       { name: "Servicio VIP Personalizado", desc: "Experiencia privada integral: asesoría de imagen, ritual capilar, estilismo y amenidades." },
       { name: "Corte & Estilismo de Autor", desc: "Diseño de corte personalizado según tus facciones, lavado relajante y brushing profesional." },
@@ -590,7 +587,6 @@
     let isAdminUnlocked = false;
     const ADMIN_PIN = "1311";
 
-    // Toast Notification Helper
     window.showToast = function(message, type = "info") {
       const container = document.getElementById("toastContainer");
       const toast = document.createElement("div");
@@ -608,36 +604,42 @@
       }, 4200);
     };
 
-    // Populate Services Grid & Select
     function initServices() {
       const grid = document.getElementById("servicesGrid");
       const select = document.getElementById("clientService");
 
-      grid.innerHTML = SERVICES.slice(1).map(s => `
-        <div class="bg-carddark p-6 rounded-2xl gold-border-glow flex flex-col justify-between hover:border-gold transition">
-          <div>
-            <h3 class="font-serif text-xl font-semibold text-gold-light mb-2">${s.name}</h3>
-            <p class="text-xs text-gray-400 leading-relaxed">${s.desc}</p>
-          </div>
-          <button onclick="selectServiceAndScroll('${s.name.replace(/'/g, "\'")}')"
-                  class="mt-5 text-left text-[11px] uppercase tracking-widest text-gold hover:text-gold-light font-semibold flex items-center gap-1.5">
-            <span>Seleccionar Servicio</span>
-            <span>→</span>
-          </button>
-        </div>
-      `).join("");
+      if (grid) {
+        grid.innerHTML = SERVICES.slice(1).map((s) => {
+          const safeName = s.name.replace(/'/g, "&#39;");
+          return `
+            <div class="bg-carddark p-6 rounded-2xl gold-border-glow flex flex-col justify-between hover:border-gold transition">
+              <div>
+                <h3 class="font-serif text-xl font-semibold text-gold-light mb-2">${s.name}</h3>
+                <p class="text-xs text-gray-400 leading-relaxed">${s.desc}</p>
+              </div>
+              <button type="button" data-service="${safeName}" onclick="selectServiceAndScroll(this.dataset.service)"
+                      class="mt-5 text-left text-[11px] uppercase tracking-widest text-gold hover:text-gold-light font-semibold flex items-center gap-1.5">
+                <span>Seleccionar Servicio</span>
+                <span>→</span>
+              </button>
+            </div>
+          `;
+        }).join("");
+      }
 
-      select.innerHTML = SERVICES.map(s => `<option value="${s.name}">${s.name}</option>`).join("");
+      if (select) {
+        select.innerHTML = SERVICES.map((s) => `<option value="${s.name}">${s.name}</option>`).join("");
+      }
     }
 
     window.selectServiceAndScroll = function(serviceName) {
       const select = document.getElementById("clientService");
-      select.value = serviceName;
-      document.getElementById("reservar").scrollIntoView({ behavior: "smooth" });
+      if (select) select.value = serviceName;
+      const target = document.getElementById("reservar");
+      if (target) target.scrollIntoView({ behavior: "smooth" });
       showToast(`Servicio seleccionado: ${serviceName}`, "info");
     };
 
-    // Date validation (Min Dec 5, 2026 & No Mondays)
     const bookingDateInput = document.getElementById("bookingDate");
     bookingDateInput.addEventListener("change", () => {
       const val = bookingDateInput.value;
@@ -648,14 +650,13 @@
         return;
       }
       const [y, m, d] = val.split("-").map(Number);
-      const selectedDay = new Date(y, m - 1, d).getDay(); // 0 = Sun, 1 = Mon
+      const selectedDay = new Date(y, m - 1, d).getDay();
       if (selectedDay === 1) {
         showToast("Los lunes permanecemos cerrados. Atendemos de Martes a Domingo.", "error");
         bookingDateInput.value = "";
       }
     });
 
-    // Submit Booking to Firestore
     document.getElementById("bookingForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("clientName").value.trim();
@@ -691,24 +692,18 @@
           createdAt: serverTimestamp()
         });
 
-        const waMessage =
-          `¡Hola Valeria Beauty Lounge! ✨ Deseo confirmar mi cita:
-` +
-          `• *Clienta:* ${name}
-` +
-          `• *Teléfono:* ${phone}
-` +
-          `• *Servicio:* ${service}
-` +
-          `• *Fecha:* ${date}
-` +
-          `• *Hora:* ${time}
-` +
-          (notes ? `• *Notas:* ${notes}
-` : ``) +
-          `• *Ubicación:* Bolonia, parque las madres 200 mts al norte. MD`;
+        const lines = [
+          "¡Hola Valeria Beauty Lounge! ✨ Deseo confirmar mi cita:",
+          `• *Clienta:* ${name}`,
+          `• *Teléfono:* ${phone}`,
+          `• *Servicio:* ${service}`,
+          `• *Fecha:* ${date}`,
+          `• *Hora:* ${time}`
+        ];
+        if (notes) lines.push(`• *Notas:* ${notes}`);
+        lines.push("• *Ubicación:* Bolonia, parque las madres 200 mts al norte. MD");
 
-        const waUrl = `https://wa.me/50586218506?text=${encodeURIComponent(waMessage)}`;
+        const waUrl = `https://wa.me/50586218506?text=${encodeURIComponent(lines.join("\n"))}`;
 
         document.getElementById("bookingForm").classList.add("hidden");
         document.getElementById("confirmationSummary").innerHTML =
@@ -733,7 +728,6 @@
       document.getElementById("bookingForm").classList.remove("hidden");
     };
 
-    // Real-Time Listener (onSnapshot)
     function startRealtimeSync() {
       onSnapshot(collection(db, RESERVAS_COLLECTION), (snapshot) => {
         const list = [];
@@ -741,7 +735,6 @@
           list.push({ id: docSnap.id, ...docSnap.data() });
         });
 
-        // Sort chronologically by date then time
         list.sort((a, b) => {
           const cmpDate = (a.date || "").localeCompare(b.date || "");
           if (cmpDate !== 0) return cmpDate;
@@ -777,7 +770,6 @@
       return hours * 60 + mins;
     }
 
-    // Admin Modal & PIN
     window.openAdminModal = function() {
       document.getElementById("adminModal").classList.remove("hidden");
       if (!isAdminUnlocked) {
@@ -812,7 +804,7 @@
       const filterDate = document.getElementById("adminDateFilter").value;
       const filterStatus = document.getElementById("adminStatusFilter").value;
 
-      const filtered = allReservations.filter(r => {
+      const filtered = allReservations.filter((r) => {
         const matchesText =
           (r.clientName || "").toLowerCase().includes(queryText) ||
           (r.clientPhone || "").toLowerCase().includes(queryText) ||
@@ -827,7 +819,7 @@
         return;
       }
 
-      tbody.innerHTML = filtered.map(r => {
+      tbody.innerHTML = filtered.map((r) => {
         const status = r.status || "Activa";
         const badgeClass = status === "Activa"
           ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/40"
@@ -903,11 +895,10 @@
     window.exportReservationsCSV = function() {
       if (!allReservations.length) return showToast("No hay citas para exportar.", "info");
       const headers = ["Fecha", "Hora", "Clienta", "Telefono", "Servicio", "Notas", "Estado"];
-      const rows = allReservations.map(r => [
+      const rows = allReservations.map((r) => [
         r.date, r.time, r.clientName, r.clientPhone, r.service, (r.notes || "").replace(/,/g, ";"), r.status || "Activa"
       ]);
-      const csv = [headers.join(","), ...rows.map(r => r.map(v => `"${v || ""}"`).join(","))].join("
-");
+      const csv = [headers.join(","), ...rows.map((r) => r.map((v) => `"${v || ""}"`).join(","))].join("\n");
       downloadFile(csv, "agenda-valeria-beauty-lounge.csv", "text/csv;charset=utf-8;");
     };
 
@@ -926,7 +917,6 @@
       URL.revokeObjectURL(url);
     }
 
-    // Share & QR Modal Logic
     let qrInstance = null;
 
     window.openShareModal = function() {
@@ -934,7 +924,7 @@
       const input = document.getElementById("publicUrlInput");
       const currentOrigin = window.location.origin && window.location.origin.startsWith("http")
         ? window.location.href
-        : "https://valeria-beauty-lounge.netlify.app";
+        : "https://eespinozag203.github.io/valeria-beauty-lounge/";
       if (!input.value) input.value = currentOrigin;
       renderQRCode(input.value);
       modal.classList.remove("hidden");
@@ -983,7 +973,6 @@
       a.click();
     };
 
-    // Initialize
     initServices();
     startRealtimeSync();
   </script>
